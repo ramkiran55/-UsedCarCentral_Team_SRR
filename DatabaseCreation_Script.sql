@@ -18,32 +18,60 @@ DROP TABLE test.UsedCarsMasterData;
 CREATE TABLE test.UsedCarsMasterData -- Ram Kiran Devireddy (radevir)
 (
 	ID BIGINT,
-	URL NVARCHAR(500),
+	ListingURL NVARCHAR(500),
 	City NVARCHAR(50),
 	CraigsCityURL NVARCHAR(500),
-	Price INT,
+	Price FLOAT,
 	ModelYear SMALLINT,
 	Manufacturer NVARCHAR(50),
 	CarModel NVARCHAR(50),
 	CarCondition NVARCHAR(50),
 	CylinderCount NVARCHAR(50),
 	FuelType NVARCHAR(50),
-	OdometerReading INT,
+	OdometerReading FLOAT,
 	CarStatus NVARCHAR(50),
-	GearType NVARCHAR(50),
+	TransmissionType NVARCHAR(50),
 	VehicleIdentificationNum NVARCHAR(50),
 	DriveType NVARCHAR(50),
 	CarSize NVARCHAR(50),
 	CarBodyType NVARCHAR(50),
-	PaintColor NVARCHAR(50),
+	CarColor NVARCHAR(50),
 	ImageURL NVARCHAR(500),
 	CarDescription NVARCHAR(MAX),
-	StateID NVARCHAR(50),
+	StateCode NVARCHAR(50),
 	Latitude FLOAT,
-	Logitude FLOAT,
-	PostingDate NVARCHAR(50)
+	Longitude FLOAT,
+	PostedDate DATETIME
 );
 
+CREATE TABLE test.UsedCarsMasterData2 -- Ram Kiran Devireddy (radevir)
+(
+	ID BIGINT IDENTITY(1000000, 1) PRIMARY KEY,
+	ListingURL NVARCHAR(500),
+	City NVARCHAR(50),
+	CraigsCityURL NVARCHAR(500),
+	Price FLOAT,
+	ModelYear SMALLINT,
+	Manufacturer NVARCHAR(50),
+	CarModel NVARCHAR(50),
+	CarCondition NVARCHAR(50),
+	CylinderCount NVARCHAR(50),
+	FuelType NVARCHAR(50),
+	OdometerReading FLOAT,
+	CarStatus NVARCHAR(50),
+	TransmissionType NVARCHAR(50),
+	VehicleIdentificationNum NVARCHAR(50),
+	DriveType NVARCHAR(50),
+	CarSize NVARCHAR(50),
+	CarBodyType NVARCHAR(50),
+	CarColor NVARCHAR(50),
+	ImageURL NVARCHAR(500),
+	CarDescription NVARCHAR(MAX),
+	StateCode NVARCHAR(50),
+	Latitude FLOAT,
+	Longitude FLOAT,
+	PostedDate DATETIME
+);
 
 -- Now I am inserting all the data from the dataset into the above table
 -- truncate the table first
@@ -61,44 +89,107 @@ WITH
     ROWTERMINATOR = '\n',
 	ORDER (
 		ID,
-		URL,
-		Region,
-		RegionUrl,
+		ListingURL,
+		City,
+		CraigsCityURL,
 		Price,
 		ModelYear,
-		CarMake,
+		Manufacturer,
 		CarModel,
 		CarCondition,
-		NumCylinders,
+		CylinderCount,
 		FuelType,
 		OdometerReading,
-		TitleStatus,
+		CarStatus,
 		TransmissionType,
 		VehicleIdentificationNum,
 		DriveType,
 		CarSize,
 		CarBodyType,
-		PaintColor,
+		CarColor,
 		ImageURL,
 		CarDescription,
-		StateID,
+		StateCode,
 		Latitude,
-		Logitude,
-		PostingDate
+		Longitude,
+		PostedDate
 	)
 )
 GO
 ;
 
+INSERT INTO test.UsedCarsMasterData2 (ID, ListingURL, City, CraigsCityURL, Price, ModelYear, Manufacturer, CarModel, CarCondition, CylinderCount, FuelType, OdometerReading, CarStatus
+		, TransmissionType, VehicleIdentificationNum, DriveType, CarSize, CarBodyType, CarColor, ImageURL, CarDescription, StateCode, Latitude, Longitude
+		,PostedDate)
+SELECT ID, ListingURL, City, CraigsCityURL, Price, ModelYear, Manufacturer, CarModel, CarCondition, CylinderCount, FuelType, OdometerReading, CarStatus
+		, TransmissionType, VehicleIdentificationNum, DriveType, CarSize, CarBodyType, CarColor, ImageURL, CarDescription, StateCode, Latitude, Longitude
+		,PostedDate
+FROM test.UsedCarsMasterData;
+
 -- (10330 rows affected)
 select * from test.UsedCarsMasterData;
-select DISTINCT(CarCondition) from test.UsedCarsMasterData;
+select DISTINCT(ID) from test.UsedCarsMasterData;
 
 -- Next Step is to Apply Normalization and Dividing into individual meaningfull, non redundant tables.
 
-select ID,
-		Region, 
-		CarState,
-		Latitude,
-		Logitude 
-from test.UsedCarsMasterData;
+CREATE TABLE test.CarsMasterData (
+    CarID INT IDENTITY(100, 1) PRIMARY KEY ,
+    Manufacturer NVARCHAR(50),
+    ModelYear SMALLINT,
+    CylinderCount NVARCHAR(50),
+    FuelType NVARCHAR(50),
+    TransmissionType NVARCHAR(50),
+    CarSize NVARCHAR(50),
+    CarBodyType NVARCHAR(50),
+    CarColor NVARCHAR(50),
+    VehicleIdentificationNum NVARCHAR(50),
+    DriveType NVARCHAR(50)
+);
+
+CREATE TABLE test.CarDetails (
+    CarDetailID INT IDENTITY(1, 1) PRIMARY KEY,
+    CarID INT FOREIGN KEY REFERENCES test.CarsMasterData(CarID),
+    CarCondition NVARCHAR(50),
+    OdometerReading FLOAT,
+    CarStatus NVARCHAR(50),
+    ImageURL NVARCHAR(500),
+    CarDescription NVARCHAR(MAX)
+);
+
+CREATE TABLE test.Locations (
+    LocationID INT IDENTITY(1, 1) PRIMARY KEY,
+    City NVARCHAR(50),
+    StateCode NVARCHAR(50),
+    Latitude FLOAT,
+    Longitude FLOAT
+);
+
+CREATE TABLE test.CarListings (
+    ListingID BIGINT IDENTITY(1000000, 1) PRIMARY KEY,
+    CarID INT FOREIGN KEY REFERENCES test.CarsMasterData(CarID),
+    LocationID INT FOREIGN KEY REFERENCES test.Locations(LocationID),
+    Price FLOAT,
+    PostedDate DATETIME,
+    ListingURL NVARCHAR(500)
+);
+
+INSERT INTO test.CarsMasterData (Manufacturer, ModelYear, CylinderCount, FuelType, TransmissionType, CarSize, CarBodyType, CarColor, VehicleIdentificationNum, DriveType)
+SELECT Manufacturer, ModelYear, CylinderCount, FuelType, TransmissionType, CarSize, CarBodyType, CarColor, VehicleIdentificationNum, DriveType
+FROM test.UsedCarsMasterData;
+
+INSERT INTO test.CarDetails (CarCondition, OdometerReading, CarStatus, ImageURL, CarDescription)
+SELECT CarCondition, OdometerReading, CarStatus, ImageURL, CarDescription
+FROM test.UsedCarsMasterData;
+
+INSERT INTO test.Locations (City, StateCode, Latitude, Longitude)
+SELECT City, StateCode, Latitude, Longitude
+FROM (
+    SELECT DISTINCT City, StateCode, Latitude, Longitude
+    FROM test.UsedCarsMasterData
+) as UniqueLocations;
+
+INSERT INTO test.CarListings (CarID, LocationID, Price, PostedDate, ListingURL)
+SELECT ID, L.LocationID, Price, CONVERT(DATETIME, PostedDate, 101), ListingURL
+FROM test.UsedCarsMasterData U
+INNER JOIN test.Locations L ON U.City = L.City AND U.StateCode = L.StateCode
+JOIN test.CarsMasterData C ON 
