@@ -20,7 +20,7 @@ Our database will be useful for people who are looking to buy or sell used cars.
 There are several similar platforms that exist for buying and selling used cars, such as Craigslist, Autotrader, and CarGurus. However, our platform aims to provide a more user-friendly experience with additional features like favorites and cart, and a safe and secure platform for transactions.
 #### Dataset:
 The Kaggle dataset we will be using contains approximately 550,000 records of used car listings from various online portals. The dataset contains 26 columns including car make, model, year, condition, odometer reading, price, and location. We will use this data to create a database for our web application and normalize the data and split it into tables as needed. We may also supplement this data with additional information from other sources to provide more comprehensive listings.
-The dataset was collected by Austin Reese and published on Kaggle in 2019. The purpose of the dataset is to provide a comprehensive collection of used car listings for research and analysis.
+The dataset was collected by Austin Reese and published on Kaggle in 2019. The purpose of the dataset is to provide a comprehensive collection of used car listings for research and analysis...
 ##### Dataset: https://www.kaggle.com/datasets/austinreese/craigslist-carstrucks-data
 
 #### Milestones:
