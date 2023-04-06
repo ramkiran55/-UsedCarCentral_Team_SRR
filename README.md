@@ -25,8 +25,8 @@ The dataset was collected by Austin Reese and published on Kaggle in 2019. The p
 
 #### Milestones:
 
-1.	Week 8 - Project Description
+1.	Week 8  - Project Description
 2.	Week 11 - Database Design
-3.	Week 13 - Web app mock
+3.	Week 13 - Web application mock demo
 4.	Week 14 - Short video presentation
-5.	Week 15 - Full demo
+5.	Week 15 - Full project demo
