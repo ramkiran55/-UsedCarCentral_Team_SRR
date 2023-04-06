@@ -209,4 +209,4 @@ FROM real.UsedCarsMasterData ucmd
 INNER JOIN real.CarsMasterData c ON ucmd.ID = c.ID
 INNER JOIN real.Locations l ON ucmd.ID = l.ID;
 
-select * from real.CarListings;
+SELECT * from real.CarListings;
